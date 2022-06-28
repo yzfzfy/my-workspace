@@ -1,0 +1,20 @@
+{
+  "componentId": {
+    "scope": "yzfzfy.myfirstscope",
+    "name": "ui/first-label",
+    "version": "0.0.2"
+  },
+  "propagate": false,
+  "extensions": {
+    "teambit.component/dev-files": {},
+    "teambit.compositions/compositions": {},
+    "teambit.pkg/pkg": {},
+    "teambit.docs/docs": {},
+    "teambit.dependencies/dependency-resolver": {},
+    "teambit.pipelines/builder": {},
+    "yzfzfy.myfirstscope/envs/my-env@0.0.4": {},
+    "teambit.envs/envs": {
+      "env": "yzfzfy.myfirstscope/envs/my-env"
+    }
+  }
+}
