@@ -81,20 +81,43 @@ teambit 是在 bit.cloud 中的一个账户，在他的账户下有一些 scope�
 
   workspace 下的组件有
 
-  - workspace
-  - variants
-  - ui
+  - workspace 该组件负责处理 bit workspace 的功能。配置 workspace 的一些特征，如 name、icon、defaultDirectory、defaultScope 等。
+  - variants 通过设置匹配模式 key，将 value 中的所有 key（这些 key 都是组件名称）作用在匹配到的文件上。 configuration variants allow to configure a selected group of components.
+
+  ```json
+  // 比如以下配置是将design文件夹内所有的组件配置使用 React env
+  "teambit.workspace/variants": {
+    "design": {
+        "teambit.react/react": {}
+    },
+  }
+  ```
+
+  - ui ui 下有一系列的组件用在本地启动的 workspace 服务上显示页面。如`@teambit/workspace.ui.empty-workspace`用来在本 workspace 中无组件时显示空状态 ui。
   - 其他的在[workspace scope](https://github.com/teambit/bit/tree/master/scopes/workspace)中查看。
 
 - dependencies
 
-  - dependency-resolver
+  - dependency-resolver 负责组件依赖解析的配置。比如 `packageManager`设置使用的包管理工具。`policy`列出 workspace 中用到的依赖。
   - pnpm
   - yarn
 
-- generator
-  - generator
+- generator 用来据组件模板快速根生成组件。模板生成器。
 
-其他 scope 可在[teambit 下的 scope](https://github.com/teambit/bit/tree/master/scopes)查看。
+  - generator A simple interface for generating component templates.生成新组件模板的工具。 支持配置`aspects`和`hideCoreTemplates`属性。`aspects`是一个 string[]，一个组件模板 id 的列表。
+
+- react
+
+  - react 这是 teambit 的 react 组件开发环境。`不是一个组件模板`，可以使用 react 组件开发环境的最佳实践来开发组件。也可以 extend 这个 env 来自定义自己的开发环境。
+    其他 scope 可在[teambit 下的 scope](https://bit.cloud/teambit/~scopes)查看。
+  - react-env
+
+- envs
+
+  - envs A composable engine for creating and maintaining development environments.创建和维护开发环境的可组合的引擎。A Bit environment is a development environment encapsulated in a Bit component. 一个 bit 组件其实内部自带封装了一套开发环境。同一个 workspace 中的不同组件可以配置不同的开发环境（只需要一行配置）。那么这个开发环境都包括什么内容呢？包括了定义不同命令的动作行为，如`bit start` `bit test` `bit build` `bit compile` `bit lint`。为组件配置 env 只能通过`teambit.workspace/variants`设置，一个组件只能用一个 env
+
+- builder
+
+- 最终目标。写一个自己的 env，这个 env 的 buildpipeline 包括了生成 umd 包。
 
 在 workspace.jsonc 中，除'$schema'字段外，所有 key 其实都是某 scope 中的组件，值中所有的 key 都是参考对应组件的 api。
