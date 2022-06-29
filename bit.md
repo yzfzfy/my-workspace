@@ -65,6 +65,30 @@ bit remote add http://localhost:3001
 
 之后通过 bit create 的组件加--scope scopeName 后可向该 scope 中导出组件。
 
+## envs
+
+envs 可复用的组件开发环境。用来简化和标准化工作流，不同类型的组件可以有不同的 env。这也说明 同样一个 bit 命令，比如`bit build`，可以运行所有组件的 build 任务，只是这些组件的 build 具体任务执行不同，但是都向外暴露了 build 方法。同样类型的组件也可以更细粒度的定制某个组件的 envs。
+
+envs 也是组件。envs 组件将不同的工作流或配置组合起来，构成了一个新的 env 组件，如把 test、lint、format 等流程集成到一起。所以 envs 可以被看做一个工具或任务的集合。不同的 env 也可能聚合了同样的工作流，只是这些工作流的配置不同。
+
+env 可以提供接口扩展或者组合成其他 env。一般来说我们不需要从零配置一个 env，只需要从 bit 默认提供的 env 扩展我们想要的 env 就可以。扩展可以很简单（比如增加一个 lint 规则），也可以很复杂（比如改变他的 build pipeline 或增加一个新的工作流任务）
+
+因为 env 集成了很多任务或配置，所以让我们可以更专注于我们的组件开发，设置好 envs 后"一劳永逸"。
+
+env service 就是一个 env 提供/包含的所有服务。teambit 定义的服务有：`compiler`、`tester`、`linter`、`formatter`、`builder`、`generator`、`docs`、`compositions`、`preview`，除了这些，也可以定义自己的 env service。使用`bit env get componentId`获取一个组件使用的 env 的配置项。
+
+上述的 env service 都可以自定义，比如自定义 compiler 任务的详情。
+
+to do
+
+- compiler 与 builder 的区别
+- 自定义 compiler 的处理，参考[teambit 官方 babel-compiler 的处理](https://bit.cloud/teambit/compilation/examples/aspects/babel-compiler)
+- 自定义 builder 的处理
+
+### 如何扩展/自定义 env
+
+执行 bit templates，输出一个 react-env，react-env 其实就是一个提供了 react 基础开发环境的内置的 env，以 react-env 为模板创建组件其实就是新建一个 env，这个 env 的模板是 react-env。很方便，不需要我们从 0 开始新建。
+
 ## 总结
 
 workspace 是用来开发组件的一个代码仓，每个人都可以初始化自己的仓。但是为了共享源代码，需要共用同一个仓。scope 是包含组件的一个范围，一个 workspace 中的不同组件可以属于不同的 scope，创建组件时可以根据默认配置创建目录，同样导出时，组件被导出到各自所属的 scope 中.
