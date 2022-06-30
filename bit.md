@@ -3,6 +3,11 @@
 bit 中一切都是组件，不限于项目中用到的 react 组件，如：一个组件模板也是以组件的概念出现，可以复用创建组件。还有一个 react 组件的打包编译的环境也可以概念化为一个组件，用来复用。
 在 bit.cloud 中，注册一个用户之后，可以新建 scope，可以多个，每个 scope 都是用来 host your components 的。不同的 scope 之间相互独立。一个 scope 中可以 host 多个组件，其中的组件分类，每个组件可以存在这些分类中，也可以单独出来不属于任何一个分类。
 
+## bit 中出现频繁的单词意思
+
+aspect： 特性 比如 env aspect、compile aspect 等
+artifacts： build 产出的产物
+
 ## workspace
 
 workspace 是一个本地开发组件的仓库。使用 bit init 初始化一个 workspace
@@ -79,9 +84,28 @@ env service 就是一个 env 提供/包含的所有服务。teambit 定义的服
 
 上述的 env service 都可以自定义，比如自定义 compiler 任务的详情。
 
-to do
+TODO:
 
-- compiler 与 builder 的区别
+- compiler 与 builder 的区别。
+
+build/snap/tag 分别对应三种类型的 pipeline，分别是`build pipeline`、`snap pipeline`、`tag pipeline`。每种 pipeline 又是由各种 task 组成的。比如 build pipeline 中有 compile task、lint task。 只是 snap pipeline 和 tag pipeline 的运行也运行了 build pipeline。
+
+因此，运行`bit build`，是执行 build pipeline 下的 task，compile 是其中的一个 task，自然要运行，这个 task 执行会编译所有组件。编译输出的代码被写到 node_modules 中的对应 scope 下，如`company.scope/ui/text => ./node_modules/@company/scope.ui.text/dist`。
+
+而 compile task 具体的行为是怎么定义的？teambit 又内置了`@teambit/compiler`组件，只需要实现该组件提供的接口即可自定义 compiler。
+
+---------------env
+----------------⬇
+-----------build pipeline
+----------------⬇
+-----------some build tasks
+------------⬇-----------⬇
+---------compiler----bundler
+
+可以通过`builder.getBuildPipe()` 或 `builder.registerBuildTask()`新增 build task，
+
+可以将 builder 看作构建这些 task 的抽象概念。teambit 官方提供了`@teambit/builder`，对外提供了自定义 task 的 API，可利用这些 API 产生新任务、扩展现有任务等以介入影响 build 进程。
+
 - 自定义 compiler 的处理，参考[teambit 官方 babel-compiler 的处理](https://bit.cloud/teambit/compilation/examples/aspects/babel-compiler)
 - 自定义 builder 的处理
 
@@ -142,6 +166,6 @@ teambit 是在 bit.cloud 中的一个账户，在他的账户下有一些 scope�
 
 - builder
 
-- 最终目标。写一个自己的 env，这个 env 的 buildpipeline 包括了生成 umd 包。
+- 最终目标。写一个自己的 env，这个 env 的 build pipeline 中有一个 task 可以生成组件的 umd 包。
 
 在 workspace.jsonc 中，除'$schema'字段外，所有 key 其实都是某 scope 中的组件，值中所有的 key 都是参考对应组件的 api。
